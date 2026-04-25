@@ -20,7 +20,7 @@ gh repo create my-org/cc-edge-mything-io \
   --clone
 
 cd cc-edge-mything-io
-make install   # creates tests/.venv and installs deps
+make install   # creates .venv at repo root and installs deps
 ```
 
 If you prefer the GitHub UI: navigate to this repo, click **Use this template** → **Create a new repository**.
