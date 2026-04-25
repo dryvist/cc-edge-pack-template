@@ -16,6 +16,7 @@ The single most important rule: **distinguish generic files from pack-specific f
 - `tests/test_pipelines.py`
 - `tests/test_routes.py`
 - `tests/requirements.txt`
+- `pyrightconfig.json`
 - `Makefile`
 - `docker-compose.yml`
 - `.github/workflows/test.yml` (only the `pack_type:` value changes per pack)
@@ -35,6 +36,7 @@ If you find yourself wanting to modify any of the above in a pack repo, **stop**
 - `default/samples.yml` (sample catalog)
 - `data/samples/*.json` (sample events)
 - `tests/fixtures/<pipeline>/*.json` (test fixtures)
+- `tests/fixtures/.skip-required-fields` (optional marker — opts the pack out of the required-fields assertion when output sourcetype/index are intentionally set downstream rather than in-pack)
 - `README.md` (describe your specific pack)
 - `LICENSE` (use Apache-2.0 unless instructed otherwise)
 
