@@ -3,7 +3,7 @@ SHELL := /bin/bash
 PACK_NAME := $(shell jq -r '.name // "unknown-pack"' package.json 2>/dev/null)
 PACK_VERSION := $(shell jq -r '.version // "0.0.0"' package.json 2>/dev/null)
 CRBL_FILE := $(PACK_NAME)-$(PACK_VERSION).crbl
-VENV := tests/.venv
+VENV := .venv
 
 .PHONY: help install build docker-up docker-down test validate clean
 
@@ -42,7 +42,7 @@ docker-down: ## Stop and remove the Docker container
 	docker compose down -v
 
 test: install ## Run pytest test suite (requires Docker; run 'make docker-up' first)
-	cd tests && ../$(VENV)/bin/python -m pytest -v
+	$(VENV)/bin/python -m pytest tests/ -v
 
 validate: build ## Build pack and instruct on validator usage
 	@echo ""
@@ -53,5 +53,5 @@ validate: build ## Build pack and instruct on validator usage
 
 clean: ## Remove build artifacts, venv, and stop Docker
 	rm -f *.crbl
-	rm -rf $(VENV) tests/__pycache__ tests/.pytest_cache
+	rm -rf $(VENV) tests/__pycache__ tests/.pytest_cache .pytest_cache
 	-docker compose down -v 2>/dev/null

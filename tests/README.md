@@ -7,8 +7,8 @@ Adopts the [criblpacks](https://github.com/criblpacks) test pattern (Python + Do
 From the pack root, install Python test dependencies into a local virtualenv:
 
 ```sh
-python3 -m venv tests/.venv
-tests/.venv/bin/pip install -r tests/requirements.txt
+python3 -m venv .venv
+.venv/bin/pip install -r tests/requirements.txt
 ```
 
 Or via the Makefile (creates the same venv):
@@ -16,6 +16,8 @@ Or via the Makefile (creates the same venv):
 ```sh
 make install
 ```
+
+The venv lives at the pack root (`.venv/`) so editor LSP tools (Pyright, Pylance, etc.) auto-detect it without additional configuration.
 
 Tests require Docker for the ephemeral `cribl/cribl` container — see `docker-compose.yml` at the pack root.
 
@@ -32,8 +34,7 @@ make docker-down  # stop the container
 Or run pytest directly (assuming the container is already running):
 
 ```sh
-cd tests
-.venv/bin/python -m pytest -v
+.venv/bin/python -m pytest tests/ -v
 ```
 
 In CI, the reusable workflow `dryvist/.github/.github/workflows/cribl-pack-test.yml` runs the same `pytest tests/` against an ephemeral `cribl/cribl` service container.
