@@ -178,7 +178,7 @@ class CriblClient:
             return
 
         deadline = time.time() + timeout_seconds
-        installed: list[str] = []
+        installed: list[str | None] = []
         while time.time() < deadline:
             installed = [p.get("id") for p in self.list_packs()]
             if expected_id in installed:
