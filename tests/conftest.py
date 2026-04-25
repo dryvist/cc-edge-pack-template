@@ -41,7 +41,7 @@ def cribl(pack_id: str):
     client.wait_until_ready()
 
     tarball = client.create_pack_tarball(PACK_ROOT)
-    client.install_pack(tarball)
+    client.install_pack(tarball, expected_id=pack_id)
 
     yield client
 

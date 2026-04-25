@@ -157,8 +157,15 @@ class CriblClient:
         buffer.seek(0)
         return buffer.read()
 
-    def install_pack(self, tarball: bytes) -> None:
-        """Upload a .crbl tarball and install it as a pack."""
+    def install_pack(self, tarball: bytes, expected_id: str | None = None, timeout_seconds: int = 30) -> None:
+        """Upload a .crbl tarball, install it, and (optionally) wait for it to appear.
+
+        Cribl's pack install is asynchronous — the POST returns before the pack
+        is fully registered. If expected_id is given, poll /packs until it
+        appears (or raise TimeoutError). Without expected_id, returns
+        immediately after the install POST and the caller is responsible for
+        waiting if needed.
+        """
         params = {
             "filename": f"{uuid.uuid4()}.crbl",
             "size": len(tarball),
@@ -166,6 +173,21 @@ class CriblClient:
         upload = self._call("put", "/packs", params=params, data=tarball)
         if upload:
             self._call("post", "/packs", payload=upload)
+
+        if expected_id is None:
+            return
+
+        deadline = time.time() + timeout_seconds
+        installed: list[str] = []
+        while time.time() < deadline:
+            installed = [p.get("id") for p in self.list_packs()]
+            if expected_id in installed:
+                return
+            time.sleep(0.5)
+        raise TimeoutError(
+            f"Pack '{expected_id}' did not appear in /packs after {timeout_seconds}s. "
+            f"Currently installed: {installed}"
+        )
 
     def delete_pack(self, pack_id: str) -> None:
         info = self._call("get", f"/packs/{pack_id}")
