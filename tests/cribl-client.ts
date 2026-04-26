@@ -57,12 +57,11 @@ const REQUIRED_FIELDS: Record<PackType, readonly string[]> = {
   stream: ["host", "source", "_time"],
 };
 
-// Cribl pack contents — only these top-level entries ship inside the .crbl.
-// Whitelisting (rather than blacklisting tooling files) keeps the tarball
-// stable as we add repo-level dev tooling (flake.nix, biome.jsonc, etc.) that
-// shouldn't leak into the pack distribution. Passed as directory names to
-// node-tar's `create()`, which auto-recurses + emits proper directory
-// entries (Cribl rejects tarballs missing them).
+// Cribl pack contents — only these top-level entries (mix of directories
+// and files) ship inside the .crbl. Whitelisting keeps the tarball stable
+// as repo-level dev tooling (flake.nix, biome.jsonc, etc.) accumulates.
+// node-tar's create() recurses into the directory entries automatically and
+// emits proper directory headers (Cribl rejects tarballs missing them).
 const PACK_ROOT_ENTRIES = new Set([
   "data",
   "default",
@@ -536,7 +535,9 @@ export function getPackId(): string {
 
 async function collectTarballEntries(packRoot: string): Promise<string[]> {
   const dirents = await readdir(packRoot, { withFileTypes: true });
+  // Sort for determinism — readdir() ordering varies across filesystems.
   return dirents
     .filter((d) => PACK_ROOT_ENTRIES.has(d.name))
-    .map((d) => d.name);
+    .map((d) => d.name)
+    .sort();
 }
