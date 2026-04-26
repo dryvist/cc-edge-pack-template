@@ -1,6 +1,6 @@
 [
   {
-    "sourcetype": "cribl:demo",
+    "sourcetype": "cribl:WRONG-VALUE-FOR-TEETH-TEST",
     "index": "main",
     "datatype": "cribl-demo",
     "_raw": "demo event"
