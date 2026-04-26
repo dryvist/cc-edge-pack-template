@@ -46,10 +46,11 @@ jobs:
         with:
           version: v${{ inputs.yq_version }}
 
-      - name: Lint YAML (uses .yamllint.yml from pack root if present)
+      - name: Lint YAML
         uses: frenck/action-yamllint@v1.5.0
         with:
           path: default/
+          config_file: .yamllint.yml
 
       - name: Validate pack structure
         run: ./scripts/validate-pack-structure.sh
