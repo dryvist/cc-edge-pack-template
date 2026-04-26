@@ -6,8 +6,14 @@
   "description": "REPLACE: Brief description of what this pack does.",
   "displayName": "REPLACE With Display Name",
   "tags": {
-    "streamtags": ["replace", "with", "tags"],
-    "dataType": ["logs"]
+    "streamtags": [
+      "replace",
+      "with",
+      "tags"
+    ],
+    "dataType": [
+      "logs"
+    ]
   },
   "exports": []
 }
