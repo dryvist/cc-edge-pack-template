@@ -25,31 +25,13 @@ jobs:
     env:
       ADDITIONAL_FILES: ${{ inputs.additional_files }}
       REPO_NAME: ${{ github.event.repository.name }}
+      TAG_NAME: ${{ github.ref_name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Get GitHub slug info
-        uses: rlespinasse/github-slug-action@v5
-
       - name: Build .crbl tarball
-        run: |
-          set -euo pipefail
-          TAG_SLUG="${GITHUB_REF_SLUG}"
-          OUT_VERSIONED="/tmp/${REPO_NAME}-${TAG_SLUG}.crbl"
-          OUT_LATEST="/tmp/${REPO_NAME}.crbl"
-
-          INCLUDE=(data default package.json README.md)
-          [[ -f LICENSE ]] && INCLUDE+=(LICENSE)
-          for extra in $ADDITIONAL_FILES; do
-            [[ -e "$extra" ]] && INCLUDE+=("$extra")
-          done
-
-          tar -czf "$OUT_VERSIONED" "${INCLUDE[@]}"
-          cp "$OUT_VERSIONED" "$OUT_LATEST"
-          ls -lh "$OUT_VERSIONED" "$OUT_LATEST"
-          echo "OUT_VERSIONED=$OUT_VERSIONED" >> "$GITHUB_ENV"
-          echo "OUT_LATEST=$OUT_LATEST" >> "$GITHUB_ENV"
+        run: ./scripts/build-crbl.sh
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2

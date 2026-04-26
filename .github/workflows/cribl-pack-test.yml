@@ -23,6 +23,10 @@ on:
         description: 'Node.js version for the test runner.'
         type: string
         default: 'lts/*'
+      yq_version:
+        description: 'Pinned mikefarah/yq version (without leading v).'
+        type: string
+        default: '4.44.5'
 
 permissions:
   contents: read
@@ -37,112 +41,18 @@ jobs:
       - name: Checkout pack
         uses: actions/checkout@v4
 
-      - name: Install yq
-        run: |
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
+      - name: Install yq (pinned)
+        uses: dcarbone/install-yq-action@v1.4.4
+        with:
+          version: v${{ inputs.yq_version }}
 
-      - name: Install yamllint
-        run: pipx install yamllint
+      - name: Lint YAML (uses .yamllint.yml from pack root if present)
+        uses: frenck/action-yamllint@v1.5.0
+        with:
+          path: default/
 
-      - name: Verify pack_type input
-        run: |
-          if [[ "$PACK_TYPE" != "edge" && "$PACK_TYPE" != "stream" ]]; then
-            echo "::error::pack_type must be 'edge' or 'stream', got '$PACK_TYPE'"
-            exit 1
-          fi
-
-      - name: Verify required pack files exist
-        run: |
-          set -euo pipefail
-          required=(package.json default/pack.yml default/pipelines/route.yml README.md)
-          missing=0
-          for f in "${required[@]}"; do
-            if [[ ! -f "$f" ]]; then
-              echo "::error file=$f::Required pack file missing"
-              missing=$((missing+1))
-            fi
-          done
-          if [[ $missing -gt 0 ]]; then
-            exit 1
-          fi
-          echo "All required pack files present."
-
-      - name: Verify package.json shape
-        run: |
-          set -euo pipefail
-          name=$(jq -r .name package.json)
-          version=$(jq -r .version package.json)
-          minLogStreamVersion=$(jq -r .minLogStreamVersion package.json)
-          for v in "$name" "$version" "$minLogStreamVersion"; do
-            if [[ -z "$v" || "$v" == "null" ]]; then
-              echo "::error::package.json missing required field"
-              exit 1
-            fi
-          done
-          if [[ "$PACK_TYPE" == "edge" ]]; then
-            if [[ ! "$name" =~ ^cc-edge-.*-io$ ]]; then
-              echo "::warning::Pack name '$name' does not follow 'cc-edge-<source>-io' convention"
-            fi
-          else
-            if [[ ! "$name" =~ ^cc-stream-.*-io$ ]]; then
-              echo "::warning::Pack name '$name' does not follow 'cc-stream-<source>-io' convention"
-            fi
-          fi
-          echo "package.json: name=$name version=$version minLogStreamVersion=$minLogStreamVersion"
-
-      - name: Verify routes reference defined pipelines
-        run: |
-          set -euo pipefail
-          mapfile -t pipelines_in_routes < <(yq -r '.routes[].pipeline' default/pipelines/route.yml | sort -u)
-          missing=0
-          for pipeline in "${pipelines_in_routes[@]}"; do
-            if [[ -z "$pipeline" || "$pipeline" == "null" ]]; then continue; fi
-            conf="default/pipelines/$pipeline/conf.yml"
-            if [[ ! -f "$conf" ]]; then
-              echo "::error::Route references pipeline '$pipeline' but $conf does not exist"
-              missing=$((missing+1))
-            fi
-          done
-          if [[ $missing -gt 0 ]]; then exit 1; fi
-          echo "All route -> pipeline references valid."
-
-      - name: Verify routes use __group output
-        run: |
-          set -euo pipefail
-          bad=$(yq -r '.routes[] | select(.output != "__group") | .id' default/pipelines/route.yml)
-          if [[ -n "$bad" ]]; then
-            echo "::warning::These routes do not use 'output: __group' (validator rule): $bad"
-          fi
-
-      - name: Verify samples directory non-empty
-        run: |
-          if [[ -d data/samples ]]; then
-            count=$(find data/samples -maxdepth 1 -name '*.json' -type f | wc -l | tr -d ' ')
-            if [[ $count -eq 0 ]]; then
-              echo "::warning::data/samples/ exists but contains no JSON sample events"
-            else
-              echo "Found $count sample event file(s) in data/samples/"
-            fi
-          else
-            echo "::warning::data/samples/ does not exist — pack lacks sample events"
-          fi
-
-      - name: Lint YAML
-        run: |
-          cat > /tmp/yamllint.yml <<'EOF'
-          extends: default
-          rules:
-            line-length: disable
-            comments-indentation: disable
-            comments: disable
-            truthy:
-              level: warning
-            indentation:
-              level: warning
-            document-start: disable
-          EOF
-          yamllint -c /tmp/yamllint.yml default/
+      - name: Validate pack structure
+        run: ./scripts/validate-pack-structure.sh
 
   test:
     name: Test pack pipelines (Vitest)
@@ -183,23 +93,20 @@ jobs:
         working-directory: tests
         run: pnpm install --frozen-lockfile
 
+      - name: Lint + format check (Biome)
+        working-directory: tests
+        run: pnpm run lint
+
       - name: Type check
         working-directory: tests
         run: pnpm run typecheck
 
-      - name: Wait for Cribl to be ready
-        run: |
-          set -euo pipefail
-          for i in $(seq 1 60); do
-            if curl -fsS http://localhost:9000/api/v1/health >/dev/null 2>&1; then
-              echo "Cribl is ready (attempt $i)"
-              exit 0
-            fi
-            sleep 2
-          done
-          echo "::error::Cribl did not become ready in 120s"
-          docker ps -a
-          exit 1
+      - name: Wait for Cribl health endpoint
+        uses: iFaxity/wait-on-action@v1.2.1
+        with:
+          resource: http://localhost:9000/api/v1/health
+          timeout: 120000
+          interval: 2000
 
       - name: Run Vitest suite
         working-directory: tests
