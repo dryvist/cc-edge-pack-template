@@ -1,10 +1,10 @@
 {
-  "name": "REPLACE-WITH-PACK-NAME",
+  "name": "cc-edge-demo-io",
   "version": "0.0.1",
   "minLogStreamVersion": "4.17.0",
-  "author": "Your Name <your.email@example.com>",
-  "description": "REPLACE: Brief description of what this pack does.",
-  "displayName": "REPLACE With Display Name",
+  "author": "dryvist <hello@dryvist.example>",
+  "description": "Demo passthrough pack — replace name/displayName/description/author when scaffolding from this template.",
+  "displayName": "Cribl Edge Demo Pack",
   "tags": {
     "streamtags": [
       "replace",
