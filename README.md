@@ -35,9 +35,10 @@ installation paths.
 Replace template placeholders before opening your first PR:
 
 - `package.json` — `name`, `displayName`, `description`, `tags`, `author`
-- `default/pack.yml` — `displayName`, `description`
 - `.github/workflows/test.yml` — flip `pack_type:` from `edge` to `stream` if
   this is a Cribl Stream pack (default is `edge`)
+- `default/pack.yml` — optional: replace the empty `logo:` with a base64 PNG
+  for the Cribl UI
 
 Then replace the demo passthrough pipeline (`default/pipelines/passthrough/`)
 and its fixture (`tests/fixtures/passthrough/`) with your pack's real
