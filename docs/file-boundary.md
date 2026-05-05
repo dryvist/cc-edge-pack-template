@@ -8,8 +8,7 @@ template: **distinguish generic files from pack-specific files.**
 Edit only here in the template; updates propagate when packs sync.
 
 - `tests/cribl-client.ts`, `tests/parse-filter.ts`, `tests/global-setup.ts`,
-  `tests/test-helpers.ts`, `tests/routes.test.ts`, `tests/pipelines.test.ts`,
-  `tests/generate-fixtures.ts`
+  `tests/test-helpers.ts`, `tests/routes.test.ts`, `tests/pipelines.test.ts`
 - `tests/package.json`, `tests/tsconfig.json`, `tests/vitest.config.ts`,
   `tests/pnpm-lock.yaml`
 - `scripts/build-crbl.sh`, `scripts/validate-pack-structure.sh`

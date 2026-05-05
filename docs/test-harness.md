@@ -23,19 +23,6 @@ The generic `pipelines.test.ts` auto-discovers and parametrizes one Vitest case
 per `<case>.json`. Add a fixture → tests run automatically. Remove a fixture →
 tests stop running. No code changes.
 
-## Generating expected fixtures
-
-Run input through the live Cribl container; capture the output trimmed to
-partial-match keys (`sourcetype`, `index`, `datatype`, `_raw`, `_time`):
-
-```sh
-make docker-up
-cd tests
-pnpm exec tsx generate-fixtures.ts <pipeline-name> fixtures/<pipeline>/<case>.json
-```
-
-Writes `<case>.expected.json` next to the input.
-
 ## Required-fields assertion
 
 Edge packs are expected to set `sourcetype` and `index` (typically via an Eval

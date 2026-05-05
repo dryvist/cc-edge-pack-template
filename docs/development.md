@@ -35,7 +35,7 @@ fires on every `git commit` going forward.
 
 ```sh
 make docker-up          # start cribl/cribl test container
-make test               # vitest run (typecheck + 11 baseline tests)
+make test               # vitest run (auto-discovers fixtures)
 make lint               # biome check
 make format             # biome format --write
 make typecheck          # tsc --noEmit
