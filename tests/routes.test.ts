@@ -116,43 +116,47 @@ describe("route flow (dynamic)", () => {
   }
 
   for (const route of routesForFlow) {
+    const routeId = route.id ?? "<anonymous>";
     const parsed = parseSimpleFilter(route.filter);
-    const skipReason =
-      parsed === null
-        ? `filter '${route.filter}' not auto-resolvable by the local matcher (expected \`<field>=='<value>'\`)`
-        : null;
 
-    it.skipIf(skipReason !== null)(
-      `${route.id ?? "<anonymous>"} routes a synthetic event to its pipeline${skipReason !== null ? ` [skip: ${skipReason}]` : ""}`,
-      async () => {
-        // parsed is guaranteed non-null here (test would be skipped otherwise),
-        // but TS doesn't know — re-derive in-test for type narrowing.
-        const reparsed = parseSimpleFilter(route.filter);
-        if (reparsed === null) throw new Error("unreachable: skipped above");
-        const [field, value] = reparsed;
-        const event = { [field]: value, _raw: "{}", _time: Date.now() / 1000 };
+    if (parsed.kind === "unsupported") {
+      // Loud failure (not silent skip) — the harness can't auto-resolve this
+      // filter, so the dynamic flow assertion would otherwise erode invisibly
+      // as packs ship more complex filters. Author must either simplify the
+      // route filter to `<field>=='<value>'` or extend tests/parse-filter.ts
+      // to handle the new form.
+      it(`${routeId} route filter is auto-resolvable by the local matcher`, () => {
+        expect.fail(
+          `Route '${routeId}' filter '${parsed.expression}' is not the canonical \`<field>=='<value>'\` shape. The dynamic-flow test cannot exercise it. Fix by (a) simplifying the route filter to the canonical shape, or (b) extending tests/parse-filter.ts to handle this form (and adding a teeth-test for the new shape).`,
+        );
+      });
+      continue;
+    }
 
-        const client = makeClient();
-        const packId = getInstalledPackId();
-        const sampleId = await client.saveSample(`route-flow-${route.id}`, [
-          event,
-        ]);
-        try {
-          const result = await client.runRouteFlow(sampleId, [event], {
-            pack: packId,
-          });
-          expect(
-            result.route.id,
-            `Expected route '${route.id}' to match the synthetic event, but route '${result.route.id}' matched first.`,
-          ).toBe(route.id);
-          expect(
-            result.events.length,
-            `Pipeline '${result.pipeline}' produced no output for the synthetic event matching route '${route.id}' — check the pipeline for unconditional Drop functions.`,
-          ).toBeGreaterThan(0);
-        } finally {
-          await client.deleteSample(sampleId);
-        }
-      },
-    );
+    it(`${routeId} routes a synthetic event to its pipeline`, async () => {
+      const { field, value } = parsed;
+      const event = { [field]: value, _raw: "{}", _time: Date.now() / 1000 };
+
+      const client = makeClient();
+      const packId = getInstalledPackId();
+      const sampleId = await client.saveSample(`route-flow-${route.id}`, [
+        event,
+      ]);
+      try {
+        const result = await client.runRouteFlow(sampleId, [event], {
+          pack: packId,
+        });
+        expect(
+          result.route.id,
+          `Expected route '${route.id}' to match the synthetic event, but route '${result.route.id}' matched first.`,
+        ).toBe(route.id);
+        expect(
+          result.events.length,
+          `Pipeline '${result.pipeline}' produced no output for the synthetic event matching route '${route.id}' — check the pipeline for unconditional Drop functions.`,
+        ).toBeGreaterThan(0);
+      } finally {
+        await client.deleteSample(sampleId);
+      }
+    });
   }
 });

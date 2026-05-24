@@ -18,6 +18,7 @@ scaffold from here via `gh repo create --template`.
 | Local development setup | [`docs/development.md`](docs/development.md) |
 | Release process | [`docs/release-process.md`](docs/release-process.md) |
 | Validator rules | [`docs/validator-rules.md`](docs/validator-rules.md) |
+| Scaffolding a new pack from this template | [`docs/new-pack.md`](docs/new-pack.md) |
 
 ## Top-level rules
 

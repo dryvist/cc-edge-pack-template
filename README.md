@@ -15,7 +15,7 @@ that wraps the common day-to-day commands.
 
 ## Installation
 
-Create a new pack repo from this template:
+Full end-to-end runbook: [`docs/new-pack.md`](docs/new-pack.md). Short version:
 
 ```sh
 gh repo create dryvist/cc-edge-<source>-io \
@@ -26,9 +26,10 @@ cd cc-edge-<source>-io
 make install            # installs Node deps + git hooks
 ```
 
-`make install` requires `node` (20+) and `pnpm` (10+). Docker is only needed
-when you run `make test`. See [`docs/development.md`](docs/development.md) for
-installation paths.
+Repo creation requires the org-admin token wrapper — see `docs/new-pack.md`
+step 1. `make install` requires `node` (20+) and `pnpm` (10+). Docker is only
+needed when you run `make test`. See [`docs/development.md`](docs/development.md)
+for installation paths.
 
 ## After scaffolding
 
@@ -69,8 +70,9 @@ version bump on every push to `main`; merge that PR to publish a release. See
 
 | Doc | What it covers |
 |---|---|
+| [`docs/new-pack.md`](docs/new-pack.md) | Step-by-step runbook for creating a new pack from this template |
 | [`docs/development.md`](docs/development.md) | Local dev setup, Make targets, optional Nix shell |
-| [`docs/test-harness.md`](docs/test-harness.md) | What gets tested, fixture conventions |
+| [`docs/test-harness.md`](docs/test-harness.md) | What gets tested, fixture conventions, Cribl version matrix |
 | [`docs/file-boundary.md`](docs/file-boundary.md) | Generic vs pack-specific files (sync rules) |
 | [`docs/release-process.md`](docs/release-process.md) | release-please flow, version bump rules |
 | [`docs/validator-rules.md`](docs/validator-rules.md) | vct-cribl-pack-validator rules + how they're enforced |
