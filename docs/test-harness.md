@@ -53,7 +53,7 @@ Shape:
 ```json
 [
   {"version": "latest", "required": true},
-  {"version": "3.5.4",  "required": false}
+  {"version": "4.17.1", "required": false}
 ]
 ```
 
@@ -65,24 +65,32 @@ Each leg posts a distinct GitHub status check named
 require the `latest` check specifically while leaving older legs informational.
 
 **Extending the matrix.** Add a JSON entry. No other edits. For example, to
-also pin against the previous minor of the current major:
+also pin against two minors back:
 
 ```yaml
 # In .github/workflows/test.yml (the per-pack caller)
 uses: dryvist/cc-edge-pack-template/.github/workflows/cribl-pack-test.yml@main
 with:
   pack_type: edge
-  cribl_versions: '[{"version":"latest","required":true},{"version":"4.17.1","required":false},{"version":"3.5.4","required":false}]'
+  cribl_versions: '[{"version":"latest","required":true},{"version":"4.17.1","required":false},{"version":"4.16.1","required":false}]'
 ```
 
 **Version policy.**
 
-- `latest` always floats — tracks the current major's newest patch (4.x today;
-  will track 5.x once Cribl ships it).
-- Pinned older entries should be exact patches (e.g. `3.5.4`, `4.17.1`) since
-  EOL or older lines don't get new patches.
-- When the current major changes, pin the last patch of the outgoing major as
-  a new entry: `{"version": "4.18.1", "required": false}`.
+- `latest` always floats — tracks Cribl's newest patch of the current
+  major+minor.
+- The second entry is the **last patch of the previous minor** — a real
+  compatibility signal that a recent Cribl release didn't break the pack.
+  As of 2026-05, that's `4.17.1` (previous minor is 4.17; latest is on
+  4.18.x). Bump when Cribl ships a new minor (e.g., when 4.19 becomes
+  `latest`, pin `4.18.x` here).
+- Don't pin years-old majors as the default. They're not a meaningful
+  signal — neither downstream packs nor their consumers run multi-year-old
+  Cribl in production. If a specific pack truly needs to support an
+  older line, that pack overrides `cribl_versions` per-repo to add it.
+- When the current major changes (e.g., Cribl ships 5.0 as `latest`), the
+  default becomes `[{latest, required}, {<last 4.x>, required: false}]` —
+  same shape, just a one-major-line shift.
 
 ## Required-fields assertion
 

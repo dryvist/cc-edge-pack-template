@@ -21,9 +21,11 @@ on:
           parallel test leg against `cribl/cribl:<version>`. Legs with
           `required: true` block PR merges on failure; `required: false` legs
           run best-effort (failures visible but non-blocking). Default covers
-          `latest` plus the most recent previous-major patch (3.5.4 EOL).
+          `latest` plus the last patch of the previous minor (4.17.1 as of
+          2026-05). Bump the second entry when a new minor lands and the old
+          previous-minor stops being a meaningful compatibility signal.
         type: string
-        default: '[{"version":"latest","required":true},{"version":"3.5.4","required":false}]'
+        default: '[{"version":"latest","required":true},{"version":"4.17.1","required":false}]'
       node_version:
         description: 'Node.js version for the test runner.'
         type: string

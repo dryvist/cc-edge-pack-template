@@ -95,15 +95,19 @@ GitHub Releases.
 ## Cribl version matrix overrides
 
 The reusable test workflow defaults to testing against `cribl/cribl:latest`
-(required) plus the most recent previous-major patch (best-effort). If your
-pack needs to pin or extend, override in your `.github/workflows/test.yml`:
+(required) plus the last patch of the previous minor (best-effort, currently
+`4.17.1` as of 2026-05). If your pack needs to pin or extend, override in your
+`.github/workflows/test.yml`:
 
 ```yaml
 uses: dryvist/cc-edge-pack-template/.github/workflows/cribl-pack-test.yml@main
 with:
   pack_type: edge
-  cribl_versions: '[{"version":"latest","required":true},{"version":"4.17.1","required":true}]'
+  cribl_versions: '[{"version":"latest","required":true},{"version":"4.17.1","required":false},{"version":"4.16.1","required":false}]'
 ```
+
+See `docs/test-harness.md` "Cribl version matrix" for the version policy
+(when to bump, when to add, when to remove).
 
 ## Branch protection (one-time, per repo)
 
