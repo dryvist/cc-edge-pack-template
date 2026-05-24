@@ -15,21 +15,20 @@ that wraps the common day-to-day commands.
 
 ## Installation
 
-Full end-to-end runbook: [`docs/new-pack.md`](docs/new-pack.md). Short version:
-
 ```sh
-gh repo create dryvist/cc-edge-<source>-io \
-  --template dryvist/cc-edge-pack-template \
-  --public --clone
+GH_TOKEN=<org-admin-token> \
+  gh repo create dryvist/cc-edge-<source>-io \
+    --template dryvist/cc-edge-pack-template \
+    --public --clone
 
 cd cc-edge-<source>-io
 make install            # installs Node deps + git hooks
 ```
 
-Repo creation requires the org-admin token wrapper — see `docs/new-pack.md`
-step 1. `make install` requires `node` (20+) and `pnpm` (10+). Docker is only
-needed when you run `make test`. See [`docs/development.md`](docs/development.md)
-for installation paths.
+Org-repo creation needs a token with `Administration: Read & write` on the
+dryvist org (standard user PATs typically can't). `make install` needs Node
+20+ and pnpm 10+. Docker is only needed for `make test`. See
+[`docs/development.md`](docs/development.md) for the dev shell.
 
 ## After scaffolding
 
@@ -70,7 +69,6 @@ version bump on every push to `main`; merge that PR to publish a release. See
 
 | Doc | What it covers |
 |---|---|
-| [`docs/new-pack.md`](docs/new-pack.md) | Step-by-step runbook for creating a new pack from this template |
 | [`docs/development.md`](docs/development.md) | Local dev setup, Make targets, optional Nix shell |
 | [`docs/test-harness.md`](docs/test-harness.md) | What gets tested, fixture conventions, Cribl version matrix |
 | [`docs/file-boundary.md`](docs/file-boundary.md) | Generic vs pack-specific files (sync rules) |

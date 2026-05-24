@@ -13,22 +13,9 @@ convention — no TypeScript edits needed to add tests.
 | `tarball-parity.test.ts` | The whitelist in `tests/cribl-client.ts::PACK_ROOT_ENTRIES` (used by every test-time pack install) matches `INCLUDE=` in `scripts/build-crbl.sh` (used by every release). Catches drift before a release ships a tarball CI never validated. |
 | `harness-teeth.test.ts` | Meta-tests: every assertion helper used by the suites above actually throws on its target failure mode. Pure unit-level; no Cribl required. |
 
-## Coverage matrix (what the harness proves it catches)
-
-Every guard listed here has at least one teeth-test in `harness-teeth.test.ts`.
-Adding a guard? Add a teeth-test in the same PR.
-
-| Guard | Lives in | Catches | Proven by |
-|---|---|---|---|
-| `assertPartialMatch` — missing expected key | `tests/test-helpers.ts` | Pipeline drops a field the fixture expects | `harness-teeth.test.ts` → "throws when an expected key is missing" |
-| `assertPartialMatch` — wrong value | `tests/test-helpers.ts` | Pipeline sets a field to the wrong value | `harness-teeth.test.ts` → "throws when an expected value differs" |
-| `assertPartialMatch` — event-count mismatch | `tests/test-helpers.ts` | Pipeline duplicates/drops events | `harness-teeth.test.ts` → "throws on event-count mismatch (actual longer/shorter)" |
-| Smoke assertion (`length > 0`) | `tests/pipelines.test.ts` (inline) | Pipeline drops every event under a real filter/eval | `harness-teeth.test.ts` covers the underlying `expect().toBeGreaterThan` indirectly via Vitest; observed in CI when a pipeline regression empties output |
-| `assertRequiredFields` — missing edge field | `tests/cribl-client.ts` | Edge pipeline output lacks `sourcetype` or `index` | `harness-teeth.test.ts` → "throws when edge sourcetype/index is missing" |
-| `assertRequiredFields` — missing stream field | `tests/cribl-client.ts` | Stream pipeline output lacks `host`/`source`/`_time` | `harness-teeth.test.ts` → "throws when stream host/_time is missing" |
-| Tarball whitelist drift | `tests/tarball-parity.test.ts` | `build-crbl.sh` and `createPackTarball` diverge | `tarball-parity.test.ts` (also self-proving: flip an `INCLUDE=` entry and watch CI go red) |
-
-If you add a new assertion helper, add a teeth-test in the same PR or coverage rots silently.
+Adding a new assertion helper? Add a matching case to `harness-teeth.test.ts`
+in the same PR — the `it()` names there are the source of truth for what each
+guard catches.
 
 ## Fixture convention
 
@@ -44,53 +31,13 @@ tests stop running. No code changes.
 
 ## Cribl version matrix
 
-The reusable test workflow (`cribl-pack-test.yml`) runs Vitest in parallel
-against every Cribl version listed in its `cribl_versions` input. Single
-source of truth: the input's JSON-array default.
-
-Shape:
-
-```json
-[
-  {"version": "latest", "required": true},
-  {"version": "4.17.1", "required": false}
-]
-```
-
-- `required: true` — failure blocks PR merges (required status check)
-- `required: false` — failure is visible but non-blocking (best-effort smoke)
-
-Each leg posts a distinct GitHub status check named
-`Test pack pipelines (Cribl <version>)`, so branch-protection rules can
-require the `latest` check specifically while leaving older legs informational.
-
-**Extending the matrix.** Add a JSON entry. No other edits. For example, to
-also pin against two minors back:
-
-```yaml
-# In .github/workflows/test.yml (the per-pack caller)
-uses: dryvist/cc-edge-pack-template/.github/workflows/cribl-pack-test.yml@main
-with:
-  pack_type: edge
-  cribl_versions: '[{"version":"latest","required":true},{"version":"4.17.1","required":false},{"version":"4.16.1","required":false}]'
-```
-
-**Version policy.**
-
-- `latest` always floats — tracks Cribl's newest patch of the current
-  major+minor.
-- The second entry is the **last patch of the previous minor** — a real
-  compatibility signal that a recent Cribl release didn't break the pack.
-  As of 2026-05, that's `4.17.1` (previous minor is 4.17; latest is on
-  4.18.x). Bump when Cribl ships a new minor (e.g., when 4.19 becomes
-  `latest`, pin `4.18.x` here).
-- Don't pin years-old majors as the default. They're not a meaningful
-  signal — neither downstream packs nor their consumers run multi-year-old
-  Cribl in production. If a specific pack truly needs to support an
-  older line, that pack overrides `cribl_versions` per-repo to add it.
-- When the current major changes (e.g., Cribl ships 5.0 as `latest`), the
-  default becomes `[{latest, required}, {<last 4.x>, required: false}]` —
-  same shape, just a one-major-line shift.
+Default: `latest` plus the last patches of the previous two minors (N / N-1 /
+N-2). `latest` is required; older legs are best-effort. Shape lives in the
+`cribl_versions` input default in `.github/workflows/cribl-pack-test.yml` —
+edit the JSON there to bump, add, or remove versions. Each leg posts its own
+status check (`Test pack pipelines (Cribl <version>)`) so branch protection
+can require `latest` specifically. When `latest` rolls over to a new minor,
+bump both older entries forward one.
 
 ## Required-fields assertion
 
