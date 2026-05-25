@@ -5,9 +5,7 @@
     {
       "description": "Track Cribl version pins inside the multi-version test matrix default in .github/workflows/cribl-pack-test.yml. Captures any `\"version\":\"X.Y.Z\"` inside the cribl_versions JSON-array default; ignores `\"version\":\"latest\"` because the regex only matches semver triples. Each match becomes a docker dep tied to cribl/cribl, so Renovate opens a PR when a newer patch ships.",
       "customType": "regex",
-      "managerFilePatterns": [
-        "/\\.github/workflows/cribl-pack-test\\.yml$/"
-      ],
+      "managerFilePatterns": ["/\\.github/workflows/cribl-pack-test\\.yml$/"],
       "matchStrings": [
         "\"version\"\\s*:\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
       ],
