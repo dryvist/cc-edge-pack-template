@@ -1,6 +1,6 @@
 name: release-please
 
-# Inherits the canonical release-please pipeline from JacobPEvans/.github,
+# Inherits the canonical release-please pipeline from JacobPEvans-personal/.github,
 # which enforces the org-wide major-bump block and uses the GitHub App token
 # so release-please PRs trigger downstream workflows. See
 # dryvist/.github/CLAUDE.md for the inheritance chain.
@@ -16,7 +16,7 @@ permissions:
 jobs:
   release-please:
     if: github.event.repository.is_template == false
-    uses: JacobPEvans/.github/.github/workflows/_release-please.yml@main
+    uses: JacobPEvans-personal/.github/.github/workflows/_release-please.yml@main
     # The inherited workflow's input is named GH_ACTION_JACOBPEVANS_APP_ID for
     # historical reasons. dryvist exposes a generic GH_APP_ID org secret and
     # forwards it here at the boundary — repo readers only see the generic name.
