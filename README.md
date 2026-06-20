@@ -1,9 +1,8 @@
 # cc-edge-pack-template
 
-Template repository for new Cribl Edge / Stream packs in the
-[dryvist](https://github.com/dryvist) org. Provides a TypeScript + Vitest test
-harness, Biome lint/format, reusable GitHub Actions workflows, and a Makefile
-that wraps the common day-to-day commands.
+Template repository for new Cribl Edge / Stream packs. Provides a TypeScript +
+Vitest test harness, Biome lint/format, reusable GitHub Actions workflows, and a
+Makefile that wraps the common day-to-day commands.
 
 ## What's in the box
 
@@ -73,7 +72,7 @@ version bump on every push to `main`; merge that PR to publish a release. See
 | [`docs/test-harness.md`](docs/test-harness.md) | What gets tested, fixture conventions |
 | [`docs/file-boundary.md`](docs/file-boundary.md) | Generic vs pack-specific files (sync rules) |
 | [`docs/release-process.md`](docs/release-process.md) | release-please flow, version bump rules |
-| [`docs/validator-rules.md`](docs/validator-rules.md) | vct-cribl-pack-validator rules + how they're enforced |
+| [`docs/validator-rules.md`](docs/validator-rules.md) | Pack-structure validation rules + how they're enforced |
 | [`.github/README.md`](.github/README.md) | Reusable workflows reference |
 
 ## Contributing
@@ -88,3 +87,7 @@ Changes here propagate to every downstream pack — tread carefully. See
 ## License
 
 Apache-2.0 — see [`LICENSE`](LICENSE).
+
+---
+
+> Part of a [larger ecosystem of ~40 repos](https://docs.jacobpevans.com) — see how it all fits together.
