@@ -6,7 +6,9 @@
     ".": {
       "package-name": "cc-edge-pack-template",
       "changelog-path": "CHANGELOG.md",
-      "extra-files": ["package.json"]
+      "extra-files": [
+        "package.json"
+      ]
     }
   }
 }
