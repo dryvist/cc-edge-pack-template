@@ -62,7 +62,10 @@ const REQUIRED_FIELDS: Record<PackType, readonly string[]> = {
 // as repo-level dev tooling (flake.nix, biome.jsonc, etc.) accumulates.
 // node-tar's create() recurses into the directory entries automatically and
 // emits proper directory headers (Cribl rejects tarballs missing them).
-const PACK_ROOT_ENTRIES = new Set([
+//
+// Exported so `tarball-parity.test.ts` can assert it stays in sync with the
+// `INCLUDE=(...)` line in `scripts/build-crbl.sh` (the release-path whitelist).
+export const PACK_ROOT_ENTRIES = new Set([
   "data",
   "default",
   "package.json",
@@ -400,11 +403,11 @@ export class CriblClient {
     for (const route of config.routes ?? []) {
       if (route.disabled === true) continue;
       const parsed = parseSimpleFilter(route.filter);
-      if (parsed === null) {
-        skippedFilters.push(route.filter ?? "");
+      if (parsed.kind === "unsupported") {
+        skippedFilters.push(parsed.expression);
         continue;
       }
-      const [field, expectedValue] = parsed;
+      const { field, value: expectedValue } = parsed;
       const matches = events.some((event) => event[field] === expectedValue);
       if (matches) {
         const output = await this.runPipeline(

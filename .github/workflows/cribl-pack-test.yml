@@ -15,10 +15,15 @@ on:
         description: "Pack type — 'edge' or 'stream'."
         type: string
         required: true
-      cribl_version:
-        description: "cribl/cribl Docker image tag. Defaults to 'latest'."
+      cribl_versions:
+        description: >-
+          JSON array of {version, required} objects — one parallel test leg
+          per entry. `required: true` blocks merges on failure; `required:
+          false` is best-effort. Default: `latest` (N) plus the last patches
+          of N-1 and N-2 minors. Bump all three when `latest` rolls over to
+          a new minor.
         type: string
-        default: 'latest'
+        default: '[{"version":"latest","required":true},{"version":"4.17.1","required":false},{"version":"4.16.1","required":false}]'
       node_version:
         description: 'Node.js version for the test runner.'
         type: string
@@ -56,14 +61,22 @@ jobs:
         run: ./scripts/validate-pack-structure.sh
 
   test:
-    name: Test pack pipelines (Vitest)
+    # One leg per entry in `cribl_versions`. Required legs block PR merges;
+    # optional legs run best-effort. `fail-fast: false` so every leg's result
+    # is visible regardless of sibling outcomes.
+    name: Test pack pipelines (Cribl ${{ matrix.cribl.version }})
     runs-on: ubuntu-latest
     needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        cribl: ${{ fromJSON(inputs.cribl_versions) }}
+    continue-on-error: ${{ !matrix.cribl.required }}
     env:
       PACK_TYPE: ${{ inputs.pack_type }}
     services:
       cribl:
-        image: cribl/cribl:${{ inputs.cribl_version }}
+        image: cribl/cribl:${{ matrix.cribl.version }}
         ports:
           - 9000:9000
           - 10080:10080

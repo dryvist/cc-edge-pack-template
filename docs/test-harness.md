@@ -10,10 +10,16 @@ convention — no TypeScript edits needed to add tests.
 | `routes.test.ts` (structure) | route.yml exists, every route has a pipeline, every referenced pipeline file exists, routes use `output: __group`, filters aren't statically falsy, no pipeline named `main` |
 | `routes.test.ts` (dynamic flow) | Per route: a synthetic event matching its filter triggers the named pipeline and isn't dropped (uses live Cribl) |
 | `pipelines.test.ts` | Per fixture: pipeline produces non-empty output; partial-match against `<case>.expected.json` if present; required-fields assertion (`sourcetype`+`index` for Edge; `host`+`source`+`_time` for Stream) unless `.skip-required-fields` marker present |
+| `tarball-parity.test.ts` | The whitelist in `tests/cribl-client.ts::PACK_ROOT_ENTRIES` (used by every test-time pack install) matches `INCLUDE=` in `scripts/build-crbl.sh` (used by every release). Catches drift before a release ships a tarball CI never validated. |
+| `harness-teeth.test.ts` | Meta-tests: every assertion helper used by the suites above actually throws on its target failure mode. Pure unit-level; no Cribl required. |
+
+Adding a new assertion helper? Add a matching case to `harness-teeth.test.ts`
+in the same PR — the `it()` names there are the source of truth for what each
+guard catches.
 
 ## Fixture convention
 
-```
+```text
 tests/fixtures/<pipeline-name>/<case>.json           # input event(s)
 tests/fixtures/<pipeline-name>/<case>.expected.json  # optional partial-match expected output
 tests/fixtures/.skip-required-fields                 # optional org-wide opt-out marker
@@ -22,6 +28,16 @@ tests/fixtures/.skip-required-fields                 # optional org-wide opt-out
 The generic `pipelines.test.ts` auto-discovers and parametrizes one Vitest case
 per `<case>.json`. Add a fixture → tests run automatically. Remove a fixture →
 tests stop running. No code changes.
+
+## Cribl version matrix
+
+Default: `latest` plus the last patches of the previous two minors (N / N-1 /
+N-2). `latest` is required; older legs are best-effort. Shape lives in the
+`cribl_versions` input default in `.github/workflows/cribl-pack-test.yml` —
+edit the JSON there to bump, add, or remove versions. Each leg posts its own
+status check (`Test pack pipelines (Cribl <version>)`) so branch protection
+can require `latest` specifically. When `latest` rolls over to a new minor,
+bump both older entries forward one.
 
 ## Required-fields assertion
 

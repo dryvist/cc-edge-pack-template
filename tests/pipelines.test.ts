@@ -24,7 +24,11 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import * as path from "node:path";
 import { describe, expect, it } from "vitest";
 import { CriblClient, type CriblEvent } from "./cribl-client.js";
-import { getInstalledPackId, makeClient } from "./test-helpers.js";
+import {
+  assertPartialMatch,
+  getInstalledPackId,
+  makeClient,
+} from "./test-helpers.js";
 
 const FIXTURES = path.join(import.meta.dirname, "fixtures");
 const SKIP_REQUIRED_FIELDS_MARKER = path.join(
@@ -66,32 +70,6 @@ function discoverCases(): FixtureCase[] {
 function loadEvents(filePath: string): CriblEvent[] {
   const raw = JSON.parse(readFileSync(filePath, "utf-8")) as unknown;
   return Array.isArray(raw) ? (raw as CriblEvent[]) : [raw as CriblEvent];
-}
-
-function assertPartialMatch(
-  actual: CriblEvent[],
-  expected: CriblEvent[],
-  context: string,
-): void {
-  expect(
-    actual.length,
-    `${context}: pipeline produced ${actual.length} events, expected ${expected.length}`,
-  ).toBe(expected.length);
-  for (let i = 0; i < expected.length; i++) {
-    const act = actual[i];
-    const exp = expected[i];
-    if (act === undefined || exp === undefined) continue;
-    for (const [key, expVal] of Object.entries(exp)) {
-      expect(
-        key in act,
-        `${context} event ${i}: expected key '${key}' missing from output`,
-      ).toBe(true);
-      expect(
-        act[key],
-        `${context} event ${i}, key '${key}': expected ${JSON.stringify(expVal)}, got ${JSON.stringify(act[key])}`,
-      ).toEqual(expVal);
-    }
-  }
 }
 
 const CASES = discoverCases();
