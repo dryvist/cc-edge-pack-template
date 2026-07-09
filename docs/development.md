@@ -12,7 +12,7 @@ Install Node + pnpm via your package manager of choice. Common paths:
 # macOS via Homebrew
 brew install node pnpm
 
-# Linux via npm
+# Linux via the pnpm standalone installer
 curl -fsSL https://get.pnpm.io/install.sh | sh -
 
 # Or via Corepack (ships with Node 16+)
