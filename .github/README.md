@@ -22,27 +22,27 @@ the `uses:` ref if you want to pin a specific template version (default
 
 Once installed, the workflows trigger automatically:
 
-- Open a PR touching `default/`, `data/samples/`, `tests/`, or `package.json`
-  → `test.yml` runs validate + Vitest.
+- Open a PR touching `default/`, `data/samples/`, `tests/`, `scripts/`, or
+  `package.json` → `test.yml` runs validate + Vitest.
 - Push to `main` → `release-please.yml` opens or updates the release PR.
 - Merge a release PR → release-please tags the version, which triggers
   `release.yml` → builds the `.crbl` and publishes to GitHub Releases.
 
 No manual invocation is needed. Override defaults by editing the caller
-workflow's `with:` block (e.g., bump `cribl_version` to test a specific
-upstream Cribl release).
+workflow's `with:` block (e.g., pass a custom `cribl_versions` JSON array to
+test specific upstream Cribl releases).
 
 ## Reusable workflows
 
 ### `cribl-pack-test.yml`
 
-Validates pack structure + runs the TypeScript Vitest suite against a
-`cribl/cribl` service container.
+Validates pack structure + runs the TypeScript Vitest suite against one
+`cribl/cribl` service container per entry in the `cribl_versions` matrix.
 
 | Input | Required | Default | Purpose |
 |---|---|---|---|
 | `pack_type` | yes | — | `edge` or `stream` (drives validator naming convention + required-fields assertion) |
-| `cribl_version` | no | `latest` | `cribl/cribl` Docker tag |
+| `cribl_versions` | no | `latest` + last patches of N-1/N-2 minors | JSON array of `{version, required}` objects — one test leg per entry; `required: false` legs are best-effort |
 | `node_version` | no | `lts/*` | Node.js version |
 | `yq_version` | no | `4.44.5` | Pinned `mikefarah/yq` version |
 
@@ -51,9 +51,10 @@ Jobs:
 1. **validate** — installs `yq` (pinned via `dcarbone/install-yq-action`),
    lints YAML (`frenck/action-yamllint`, config from `.yamllint.yml`), runs
    `scripts/validate-pack-structure.sh`.
-2. **test** — sets up Node + pnpm (cached), installs deps, runs Biome lint,
-   typechecks, waits for Cribl health endpoint
-   (`iFaxity/wait-on-action`), runs `pnpm run test`.
+2. **test** (matrix) — per Cribl version: sets up Node + pnpm (cached),
+   installs deps, runs Biome lint, typechecks, waits for Cribl health
+   endpoint (`iFaxity/wait-on-action`), runs `pnpm run test`. Each leg posts
+   its own status check (`Test pack pipelines (Cribl <version>)`).
 
 ### `cribl-pack-release.yml`
 
@@ -72,8 +73,8 @@ when a release PR merges).
 | File | Trigger | Calls |
 |---|---|---|
 | `workflows/test.yml` | PR + push to main (paths-filtered) | `cribl-pack-test.yml` (this repo) |
-| `workflows/release.yml` | tag push matching `v*` | `cribl-pack-release.yml` (this repo) |
-| `workflows/release-please.yml` | push to main | `_release-please.yml` (inherited from `JacobPEvans/.github`) |
+| `workflows/release.yml` | semver tag push (`vX.Y.Z`, plus `-RCn`/`-TCn` prereleases) | `cribl-pack-release.yml` (this repo) |
+| `workflows/release-please.yml` | push to main | `_release-please.yml` (inherited from `dryvist/.github`) |
 
 ## Updating reusable workflow inputs
 
