@@ -44,7 +44,7 @@ jobs:
       PACK_TYPE: ${{ inputs.pack_type }}
     steps:
       - name: Checkout pack
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
 
       - name: Install yq (pinned)
         uses: dcarbone/install-yq-action@v1.3.1
@@ -88,7 +88,7 @@ jobs:
           --health-start-period 30s
     steps:
       - name: Checkout pack
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
