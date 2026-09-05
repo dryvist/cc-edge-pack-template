@@ -67,7 +67,7 @@ version bump on every push to `main`; merge that PR to publish a release. See
 ## Documentation
 
 | Doc | What it covers |
-|---|---|
+| --- | --- |
 | [`docs/development.md`](docs/development.md) | Local dev setup, Make targets, optional Nix shell |
 | [`docs/test-harness.md`](docs/test-harness.md) | What gets tested, fixture conventions, Cribl version matrix |
 | [`docs/file-boundary.md`](docs/file-boundary.md) | Generic vs pack-specific files (sync rules) |
