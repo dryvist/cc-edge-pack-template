@@ -7,11 +7,11 @@ convention — no TypeScript edits needed to add tests.
 
 | Suite | What it asserts |
 | --- | --- |
-| `routes.test.ts` (structure) | route.yml exists, every route has a pipeline, every referenced pipeline file exists, routes use `output: __group`, filters aren't statically falsy, no pipeline named `main` |
+| `routes.test.ts` (structure) | route.yml exists; every route names a real pipeline; routes use `output: __group`; no falsy filter; no pipeline named `main` |
 | `routes.test.ts` (dynamic flow) | Per route: a synthetic event matching its filter triggers the named pipeline and isn't dropped (uses live Cribl) |
-| `pipelines.test.ts` | Per fixture: pipeline produces non-empty output; partial-match against `<case>.expected.json` if present; required-fields assertion (`sourcetype`+`index` for Edge; `host`+`source`+`_time` for Stream) unless `.skip-required-fields` marker present |
-| `tarball-parity.test.ts` | The whitelist in `tests/cribl-client.ts::PACK_ROOT_ENTRIES` (used by every test-time pack install) matches `INCLUDE=` in `scripts/build-crbl.sh` (used by every release). Catches drift before a release ships a tarball CI never validated. |
-| `harness-teeth.test.ts` | Meta-tests: every assertion helper used by the suites above actually throws on its target failure mode. Pure unit-level; no Cribl required. |
+| `pipelines.test.ts` | Per fixture: non-empty output; partial match against `<case>.expected.json` if present; required fields unless `.skip-required-fields` |
+| `tarball-parity.test.ts` | `PACK_ROOT_ENTRIES` (tests/cribl-client.ts) matches `INCLUDE=` (scripts/build-crbl.sh), so no release ships an untested tarball |
+| `harness-teeth.test.ts` | Meta-tests: every assertion helper above actually throws on its target failure mode. Pure unit-level; no Cribl required. |
 
 Adding a new assertion helper? Add a matching case to `harness-teeth.test.ts`
 in the same PR — the `it()` names there are the source of truth for what each
@@ -58,7 +58,7 @@ pass-through packs whose downstream sets these fields).
 | `deletePack(packId)` | Remove pack |
 | `saveSample(name, events)` / `deleteSample(id)` | Sample lifecycle |
 | `runPipeline(pipeline, sampleId, {pack})` | Execute via `/preview` (mode `pipe`); returns output events |
-| `runRouteFlow(sampleId, events, {pack})` | Local route-matcher fallback (Cribl has no `mode:route`); finds matching route in `route.yml`, then runs its pipeline |
+| `runRouteFlow(sampleId, events, {pack})` | Local route-matcher fallback (Cribl has no `mode:route`): finds the route in `route.yml`, runs its pipeline |
 | `assertRequiredFields(events, packType?)` | Assert canonical fields per pack type |
 | `startCapture(filter, ...)` / `readCapture(id, ...)` | Live capture primitives (reserved for future integration tests) |
 | `createPackTarball(packRoot)` (static) | Build `.crbl` from on-disk pack contents |
