@@ -6,7 +6,7 @@ convention — no TypeScript edits needed to add tests.
 ## What gets tested
 
 | Suite | What it asserts |
-|---|---|
+| --- | --- |
 | `routes.test.ts` (structure) | route.yml exists, every route has a pipeline, every referenced pipeline file exists, routes use `output: __group`, filters aren't statically falsy, no pipeline named `main` |
 | `routes.test.ts` (dynamic flow) | Per route: a synthetic event matching its filter triggers the named pipeline and isn't dropped (uses live Cribl) |
 | `pipelines.test.ts` | Per fixture: pipeline produces non-empty output; partial-match against `<case>.expected.json` if present; required-fields assertion (`sourcetype`+`index` for Edge; `host`+`source`+`_time` for Stream) unless `.skip-required-fields` marker present |
@@ -52,7 +52,7 @@ pass-through packs whose downstream sets these fields).
 `tests/cribl-client.ts` wraps the Cribl management API. Reference:
 
 | Method | Purpose |
-|---|---|
+| --- | --- |
 | `waitUntilReady()` | Block until `/health` returns 200 |
 | `installPack(tarball, expectedId?)` | Upload `.crbl` + poll until pack registers |
 | `deletePack(packId)` | Remove pack |

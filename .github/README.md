@@ -42,7 +42,7 @@ Validates pack structure + runs the TypeScript Vitest suite against one
 | Input | Required | Default | Purpose |
 | --- | --- | --- | --- |
 | `pack_type` | yes | — | `edge` or `stream` (drives validator naming convention + required-fields assertion) |
-| `cribl_versions` | no | `latest` + last patches of N-1/N-2 minors | JSON array of `{version, required}` objects — one test leg per entry; `required: false` legs are best-effort |
+| `cribl_versions` | no | `latest` + last patches of N-1/N-2 minors | JSON array of `{version, required}`; one test leg each, `required: false` is best-effort |
 | `node_version` | no | `lts/*` | Node.js version |
 | `yq_version` | no | `4.44.5` | Pinned `mikefarah/yq` version |
 
