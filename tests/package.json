@@ -12,7 +12,7 @@
     "lint": "biome check ..",
     "format": "biome format --write .."
   },
-  "packageManager": "pnpm@11.28.2",
+  "packageManager": "pnpm@12.2.1",
   "engines": {
     "node": ">=20"
   },
