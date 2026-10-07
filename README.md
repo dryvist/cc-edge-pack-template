@@ -25,8 +25,9 @@ make install            # installs Node deps + git hooks
 ```
 
 Org-repo creation needs a token with `Administration: Read & write` on the
-dryvist org (standard user PATs typically can't). `make install` needs Node
-20+ and pnpm 10+. Docker is only needed for `make test`. See
+dryvist org (standard user PATs typically can't). `make install` needs Node.js
+22.12+ in the 22.x line, 24.x, or 26+ and pnpm 10+. Docker is only needed for
+`make test`. See
 [`docs/development.md`](docs/development.md) for the dev shell.
 
 ## After scaffolding
