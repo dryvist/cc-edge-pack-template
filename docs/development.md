@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Node.js 20+ (LTS recommended)
+- Node.js 22.12+ in the 22.x line, 24.x, or 26+ (required by Vitest 5)
 - pnpm 10+
 - Docker (for the local Cribl test container)
 
