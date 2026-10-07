@@ -26,11 +26,11 @@
       },
       "locked": {
         "dir": "shells/typescript",
-        "lastModified": 1791181785,
-        "narHash": "sha256-BjKy3YezgNW6O1ExtSHbZNnVLcShfRl3WrVAYMwaI0g=",
+        "lastModified": 1791337178,
+        "narHash": "sha256-2TTD7dC5bp4XDP6GF52gnx2yqHi/a9kOmRe16/o/kSE=",
         "owner": "JacobPEvans",
         "repo": "nix-devenv",
-        "rev": "49da831bfd40d77e2ef65ea5351e880e6671da6e",
+        "rev": "f022347d5d6de41768f33fda32a126db86850025",
         "type": "github"
       },
       "original": {
