@@ -4,8 +4,14 @@ name: Cribl Pack Release (reusable)
 #
 #   uses: dryvist/cc-edge-pack-template/.github/workflows/cribl-pack-release.yml@main
 #
-# Builds the .crbl tarball and uploads to GitHub Releases. Triggered by tag
-# push in the calling workflow.
+# Builds the .crbl tarball and attaches it to the GitHub release named by `tag`.
+# The release must still be a draft: a published release is immutable and takes
+# no new assets. Callers therefore run this after release-please creates the
+# draft, and publish the release afterwards (see the caller shape in the pack's
+# release-please.yml).
+#
+# `tag` defaults to the triggering tag (github.ref_name), for a caller that runs
+# on a tag push.
 
 on:
   workflow_call:
@@ -14,18 +20,22 @@ on:
         description: 'Extra files to include in the .crbl tarball, space-separated. LICENSE included automatically if present.'
         type: string
         default: ''
+      tag:
+        description: 'Tag of the draft release to attach the .crbl to. Defaults to github.ref_name.'
+        type: string
+        default: ''
 
 permissions:
   contents: write
 
 jobs:
   release:
-    name: Build .crbl and publish GitHub release
+    name: Build .crbl and attach it to the release
     runs-on: ubuntu-latest
     env:
       ADDITIONAL_FILES: ${{ inputs.additional_files }}
       REPO_NAME: ${{ github.event.repository.name }}
-      TAG_NAME: ${{ github.ref_name }}
+      TAG_NAME: ${{ inputs.tag || github.ref_name }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -33,11 +43,10 @@ jobs:
       - name: Build .crbl tarball
         run: ./scripts/build-crbl.sh
 
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3
-        with:
-          prerelease: ${{ contains(github.ref, 'RC') || contains(github.ref, 'TC') }}
-          generate_release_notes: true
-          files: |
-            ${{ env.OUT_VERSIONED }}
-            ${{ env.OUT_LATEST }}
+      - name: Attach .crbl to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # --clobber keeps a re-run after a partial failure idempotent. It only
+          # replaces assets on a draft; a published release rejects the upload.
+          gh release upload "${TAG_NAME}" "${OUT_VERSIONED}" "${OUT_LATEST}" --clobber
