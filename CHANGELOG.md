@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/dryvist/cc-edge-pack-template/compare/v1.0.0...v1.0.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* **release:** attach the .crbl to the release named by tag ([#101](https://github.com/dryvist/cc-edge-pack-template/issues/101)) ([e1f0c30](https://github.com/dryvist/cc-edge-pack-template/commit/e1f0c30763d49a47d4b35be51466a490c456a157))
+
 ## 1.0.0 (2026-09-12)
 
 
