@@ -44,6 +44,7 @@ jobs:
   validate:
     name: Validate pack structure
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       PACK_TYPE: ${{ inputs.pack_type }}
     steps:
@@ -70,6 +71,7 @@ jobs:
     # is visible regardless of sibling outcomes.
     name: Test pack pipelines (Cribl ${{ matrix.cribl.version }})
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: validate
     strategy:
       fail-fast: false

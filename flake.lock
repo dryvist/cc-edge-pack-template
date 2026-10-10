@@ -28,14 +28,14 @@
         "dir": "shells/typescript",
         "lastModified": 1791583831,
         "narHash": "sha256-v9wWQSvmn2JkbUcWekz9d0ucDYeZ4sPXUrMnjAC8GjQ=",
-        "owner": "JacobPEvans",
+        "owner": "dryvist",
         "repo": "nix-devenv",
         "rev": "4dfbc834ed6e383fa2bf8bdc7f2227a488a03da5",
         "type": "github"
       },
       "original": {
         "dir": "shells/typescript",
-        "owner": "JacobPEvans",
+        "owner": "dryvist",
         "repo": "nix-devenv",
         "type": "github"
       }
