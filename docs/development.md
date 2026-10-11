@@ -57,7 +57,7 @@ If you use Nix, the org's typescript devShell pins the toolchain (Node, pnpm,
 TypeScript, Biome) so it's identical across machines:
 
 ```sh
-nix develop github:dryvist/nix-devenv?dir=shells/typescript
+nix develop "github:dryvist/nix-devenv?dir=shells/typescript&ref=vN"
 ```
 
 Or via direnv:
