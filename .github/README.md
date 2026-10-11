@@ -11,12 +11,12 @@ These workflows install themselves implicitly when a new pack scaffolds from
 `dryvist/cc-edge-pack-template` (`gh repo create --template`). The caller
 workflows under `.github/workflows/` are copied verbatim; the reusable
 workflows they reference resolve at runtime against
-`dryvist/cc-edge-pack-template@main`.
+`dryvist/cc-edge-pack-template/.github/workflows/<file>@<40-hex-sha> # vX.Y.Z`.
 
 If you're adding a workflow to a non-template repo manually, copy the relevant
 caller from this directory into your repo's `.github/workflows/` and adjust
-the `uses:` ref if you want to pin a specific template version (default
-`@main` follows the template's main branch).
+the `uses:` ref to pin a different template release. First-party reusable workflows are
+always referenced as `@<40-hex-sha> # vX.Y.Z`.
 
 ## Usage
 
