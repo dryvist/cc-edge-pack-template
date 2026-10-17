@@ -26,4 +26,4 @@ jobs:
     if: github.ref_type == 'tag' && github.event.repository.is_template == false
     permissions:
       contents: write
-    uses: dryvist/cc-edge-pack-template/.github/workflows/cribl-pack-release.yml@454eb757e70c3ca894504eb9496c3f3f878c2768 # v1.0.1
+    uses: dryvist/cc-edge-pack-template/.github/workflows/cribl-pack-release.yml@v1
