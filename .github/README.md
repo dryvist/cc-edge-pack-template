@@ -59,12 +59,13 @@ Jobs:
 
 ### `cribl-pack-release.yml`
 
-Builds a `.crbl` tarball via `scripts/build-crbl.sh` and publishes it to
-GitHub Releases (`softprops/action-gh-release`).
+Builds a `.crbl` tarball via `scripts/build-crbl.sh` and attaches it to a
+draft GitHub Release with `gh release upload --clobber`.
 
 | Input | Required | Default | Purpose |
 | --- | --- | --- | --- |
 | `additional_files` | no | `''` | Space-separated extra files to include in tarball; `LICENSE` auto-included if present |
+| `tag` | no | `''` | Tag of the draft release to attach the tarball to; defaults to `github.ref_name` |
 
 Triggered by tag push in the calling workflow (typically by release-please
 when a release PR merges).
@@ -87,7 +88,7 @@ absolutely cannot.
 
 Per [`SECURITY.md`](https://github.com/JacobPEvans/.github/blob/main/SECURITY.md):
 
-- Trusted (`actions/*`, `pnpm/action-setup`, `softprops/action-gh-release`):
+- Trusted (`actions/*`, `pnpm/action-setup`):
   semver tag pins (`@v4`, etc.)
 - Untrusted (everything else): SHA pins. Renovate (per the org's
   `renovate.json`) auto-converts version tags to SHA on first run.
