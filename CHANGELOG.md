@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/dryvist/cc-edge-pack-template/compare/v1.0.1...v1.1.0) (2026-10-17)
+
+
+### Miscellaneous Chores
+
+* release 1.1.0 ([#145](https://github.com/dryvist/cc-edge-pack-template/issues/145)) ([004ffc0](https://github.com/dryvist/cc-edge-pack-template/commit/004ffc0c8e3c44676344ea817d1ec4dcb3c4d640))
+
 ## [1.0.1](https://github.com/dryvist/cc-edge-pack-template/compare/v1.0.0...v1.0.1) (2026-10-08)
 
 
