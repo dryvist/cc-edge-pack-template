@@ -8,7 +8,7 @@ name: Cribl Pack Release (reusable)
 # The release must still be a draft: a published release is immutable and takes
 # no new assets. Callers therefore run this after release-please creates the
 # draft, and publish the release afterwards (see the caller shape in the pack's
-# release-please.yml).
+# release.yml).
 #
 # `tag` defaults to the triggering tag (github.ref_name), for a caller that runs
 # on a tag push.

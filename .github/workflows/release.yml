@@ -2,14 +2,28 @@ name: Release
 
 on:
   push:
+    branches: [main]
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
       - 'v[0-9]+.[0-9]+.[0-9]+-[RT]C[0-9]+'
+  pull_request:
 
-permissions:
-  contents: write
+permissions: {}
 
 jobs:
   release:
-    if: github.event.repository.is_template == false
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    uses: JacobPEvans/.github/.github/workflows/_release.yml@v1
+    secrets:
+      GH_ACTION_RELEASE_PLEASE_PRIVATE_KEY: ${{ secrets.GH_ACTION_RELEASE_PLEASE_PRIVATE_KEY }}
+    permissions:
+      contents: write
+      pull-requests: write
+      statuses: write
+      checks: read
+
+  pack-release:
+    if: github.ref_type == 'tag' && github.event.repository.is_template == false
+    permissions:
+      contents: write
     uses: dryvist/cc-edge-pack-template/.github/workflows/cribl-pack-release.yml@454eb757e70c3ca894504eb9496c3f3f878c2768 # v1.0.1
