@@ -1,88 +1,34 @@
-# `.github/` — workflows for this template
+# `.github/` — workflow callers for Cribl packs
 
-Reusable GitHub Actions workflows callable from any dryvist Cribl pack via
-`uses: dryvist/cc-edge-pack-template/.github/workflows/<file>@<40-hex commit SHA> # vX.Y.Z`. Caller
-workflows in this repo (`test.yml`, `release.yml`) wire
-them up to GitHub events.
+The workflows in this directory are event callers. The pack test and release
+jobs call reusable workflows from `jpe-cribl/.github` at a pinned commit, which
+provide the CI behavior and the shared scripts.
 
 ## Installation
 
-These workflows install themselves implicitly when a new pack scaffolds from
-`dryvist/cc-edge-pack-template` (`gh repo create --template`). The caller
-workflows under `.github/workflows/` are copied verbatim; the reusable
-workflows they reference resolve at runtime against
-`dryvist/cc-edge-pack-template/.github/workflows/<file>@<40-hex-sha> # vX.Y.Z`.
-
-If you're adding a workflow to a non-template repo manually, copy the relevant
-caller from this directory into your repo's `.github/workflows/` and adjust
-the `uses:` ref to pin a different template release. Pack-local reusable
-workflows are pinned to their commit SHA; the shared workflow homes use `@v1`.
+These caller workflows are copied when a pack is scaffolded from the template
+(`gh repo create --template`). The reusable workflows resolve at runtime from
+`jpe-cribl/.github`; shared CI scripts are checked out under `.gh-shared/` in CI.
 
 ## Usage
 
-Once installed, the workflows trigger automatically:
-
-- Open a PR touching `default/`, `data/samples/`, `tests/`, `scripts/`, or
-  `package.json` → `test.yml` runs validate + Vitest.
-- Push to `main` → `release.yml` calls central `_release.yml` to open or update
-  the release PR.
-- A semver tag push → the repository-specific release job calls
-  `cribl-pack-release.yml` to package the `.crbl` asset.
-
-No manual invocation is needed. Override defaults by editing the caller
-workflow's `with:` block (e.g., pass a custom `cribl_versions` JSON array to
-test specific upstream Cribl releases).
-
-## Reusable workflows
-
-### `cribl-pack-test.yml`
-
-Validates pack structure + runs the TypeScript Vitest suite against one
-`cribl/cribl` service container per entry in the `cribl_versions` matrix.
-
-| Input | Required | Default | Purpose |
-| --- | --- | --- | --- |
-| `pack_type` | yes | — | `edge` or `stream` (drives validator naming convention + required-fields assertion) |
-| `cribl_versions` | no | `latest` + last patches of N-1/N-2 minors | JSON array of `{version, required}`; one test leg each, `required: false` is best-effort |
-| `node_version` | no | `lts/*` | Node.js version |
-| `yq_version` | no | `4.44.5` | Pinned `mikefarah/yq` version |
-
-Jobs:
-
-1. **validate** — installs `yq` (pinned via `dcarbone/install-yq-action`),
-   lints YAML (`frenck/action-yamllint`, config from `.yamllint.yml`), runs
-   `scripts/validate-pack-structure.sh`.
-2. **test** (matrix) — per Cribl version: sets up Node + pnpm (cached),
-   installs deps, runs Biome lint, typechecks, waits for Cribl health
-   endpoint (`iFaxity/wait-on-action`), runs `pnpm run test`. Each leg posts
-   its own status check (`Test pack pipelines (Cribl <version>)`).
-
-### `cribl-pack-release.yml`
-
-Builds a `.crbl` tarball via `scripts/build-crbl.sh` and attaches it to a
-draft GitHub Release with `gh release upload --clobber`.
-
-| Input | Required | Default | Purpose |
-| --- | --- | --- | --- |
-| `additional_files` | no | `''` | Space-separated extra files to include in tarball; `LICENSE` auto-included if present |
-| `tag` | no | `''` | Tag of the draft release to attach the tarball to; defaults to `github.ref_name` |
-
-Triggered by tag push in the calling workflow (typically by release-please
-when a release PR merges).
+- A PR touching `default/`, `data/samples/`, `tests/`, `scripts/`, or
+  `package.json` runs `test.yml`.
+- A version tag runs the `pack-release` job in `release.yml` and publishes the
+  `.crbl` artifact.
+- Version-bump automation is `_release.yml` from `JacobPEvans/.github`.
 
 ## Caller workflows in this repo
 
 | File | Trigger | Calls |
 | --- | --- | --- |
-| `workflows/test.yml` | PR + push to main (paths-filtered) | `cribl-pack-test.yml` (this repo) |
-| `workflows/release.yml` | push to main + PR; semver tag push | `_release.yml` (central) and `cribl-pack-release.yml` (this repo) |
+| `workflows/test.yml` | PR + push to main (paths-filtered) | `cribl-pack-test.yml` (`jpe-cribl/.github`) |
+| `workflows/release.yml` | push to main + PR; semver tag push | `_release.yml` (`JacobPEvans/.github`) and `cribl-pack-release.yml` (`jpe-cribl/.github`) |
 
-## Updating reusable workflow inputs
+## Updating shared workflow inputs
 
-Adding/renaming an input is a breaking change for every consumer pack. Use the
-`workflow_call.inputs.<name>.default` field to keep the change backward
-compatible whenever possible. Bump major version of the workflow only if you
-absolutely cannot.
+Adding or renaming an input can affect every consumer pack. Keep input defaults
+backward compatible whenever possible.
 
 ## Pinning external actions
 
