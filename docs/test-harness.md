@@ -10,7 +10,7 @@ convention — no TypeScript edits needed to add tests.
 | `routes.test.ts` (structure) | route.yml exists; every route names a real pipeline; routes use `output: __group`; no falsy filter; no pipeline named `main` |
 | `routes.test.ts` (dynamic flow) | Per route: a synthetic event matching its filter triggers the named pipeline and isn't dropped (uses live Cribl) |
 | `pipelines.test.ts` | Per fixture: non-empty output; partial match against `<case>.expected.json` if present; required fields unless `.skip-required-fields` |
-| `tarball-parity.test.ts` | `PACK_ROOT_ENTRIES` (tests/cribl-client.ts) matches `INCLUDE=` (scripts/build-crbl.sh), so no release ships an untested tarball |
+| `tarball-parity.test.ts` | `PACK_ROOT_ENTRIES` (tests/cribl-client.ts) matches `INCLUDE=` in shared `build-crbl.sh`; no release ships an untested tarball |
 | `harness-teeth.test.ts` | Meta-tests: every assertion helper above actually throws on its target failure mode. Pure unit-level; no Cribl required. |
 
 Adding a new assertion helper? Add a matching case to `harness-teeth.test.ts`
@@ -33,9 +33,9 @@ tests stop running. No code changes.
 
 Default: `latest` plus the last patches of the previous two minors (N / N-1 /
 N-2). `latest` is required; older legs are best-effort. Shape lives in the
-`cribl_versions` input default in `.github/workflows/cribl-pack-test.yml` —
-edit the JSON there to bump, add, or remove versions. Each leg posts its own
-status check (`Test pack pipelines (Cribl <version>)`) so branch protection
+`cribl_versions` input default in the shared `cribl-pack-test.yml` workflow
+in `jpe-cribl/.github`; edit the JSON there to bump, add, or remove versions.
+Each leg posts its own status check (`Test pack pipelines (Cribl <version>)`) so branch protection
 can require `latest` specifically. When `latest` rolls over to a new minor,
 bump both older entries forward one.
 
