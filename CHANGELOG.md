@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/dryvist/cc-edge-pack-template/compare/v1.1.0...v1.1.1) (2026-10-24)
+
+
+### Bug Fixes
+
+* enforce seven-day pnpm resolution cooldown ([#152](https://github.com/dryvist/cc-edge-pack-template/issues/152)) ([f20c6a1](https://github.com/dryvist/cc-edge-pack-template/commit/f20c6a18de1d3b4cc0578a82e09e106e1a67763a))
+
 ## [1.1.0](https://github.com/dryvist/cc-edge-pack-template/compare/v1.0.1...v1.1.0) (2026-10-17)
 
 
