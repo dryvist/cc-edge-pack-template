@@ -22,7 +22,7 @@ corepack enable pnpm
 ## First-time setup
 
 ```sh
-git clone https://github.com/dryvist/cc-edge-<pack>-io.git
+git clone https://github.com/<owner>/cc-edge-<pack>-io.git
 cd cc-edge-<pack>-io
 make install            # pnpm install in tests/ (also installs lefthook git hooks)
 ```

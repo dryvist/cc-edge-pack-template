@@ -1,4 +1,4 @@
-# CI Gate — thin wrapper over the dryvist org reusable workflow
+# CI Gate — thin wrapper over the org reusable workflow
 #
 # Delegates the standard checks to the org orchestrator
 # `JacobPEvans/.github/.github/workflows/_ci-gate.yml@v1

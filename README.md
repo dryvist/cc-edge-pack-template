@@ -16,8 +16,8 @@ Makefile that wraps the common day-to-day commands.
 
 ```sh
 GH_TOKEN=<org-admin-token> \
-  gh repo create dryvist/cc-edge-<source>-io \
-    --template dryvist/cc-edge-pack-template \
+  gh repo create <owner>/cc-edge-<source>-io \
+    --template <template-owner>/cc-edge-pack-template \
     --public --clone
 
 cd cc-edge-<source>-io
@@ -25,7 +25,7 @@ make install            # installs Node deps + git hooks
 ```
 
 Org-repo creation needs a token with `Administration: Read & write` on the
-dryvist org (standard user PATs typically can't). `make install` needs Node.js
+target org (standard user PATs typically can't). `make install` needs Node.js
 22.12+ in the 22.x line, 24.x, or 26+ and pnpm 10+. Docker is only needed for
 `make test`. See
 [`docs/development.md`](docs/development.md) for the dev shell.
