@@ -88,7 +88,3 @@ Changes here propagate to every downstream pack — tread carefully. See
 ## License
 
 Apache-2.0 — see [`LICENSE`](LICENSE).
-
----
-
-> Part of a [larger ecosystem of ~40 repos](https://docs.jacobpevans.com) — see how it all fits together.
