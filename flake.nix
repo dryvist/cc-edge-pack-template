@@ -32,9 +32,22 @@
       forAllSystems = nixpkgs.lib.genAttrs systems;
     in
     {
-      # The subflake exposes its sole shell as `default`.
-      devShells = forAllSystems (system: {
-        default = nix-devenv.devShells.${system}.default;
-      });
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          default = pkgs.mkShell {
+            inputsFrom = [ nix-devenv.devShells.${system}.default ];
+            packages = with pkgs; [
+              lefthook
+              yq-go
+              jq
+              markdownlint-cli2
+            ];
+          };
+        }
+      );
     };
 }
