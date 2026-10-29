@@ -8,7 +8,7 @@ this file is the load-bearing index.
 
 ## What this repo is
 
-Template for new Cribl Edge / Stream packs in the **dryvist** org. New packs
+Template for new Cribl Edge / Stream packs. New packs
 scaffold from here via `gh repo create --template`.
 
 ## Scope

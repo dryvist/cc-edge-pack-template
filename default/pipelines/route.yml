@@ -3,7 +3,7 @@ groups: {}
 comments: []
 routes:
   # Demo route. Replace with your real routes when scaffolding a new pack.
-  # Validator rules:
+  # Pack conventions:
   #   - id and pipeline must be descriptive (no 'main', no 'route1')
   #   - filter must be a real expression (not literally 'false' / '0')
   #   - output MUST be __group (not input_id)

@@ -1,4 +1,4 @@
-# dryvist org-wide pre-commit base template (non-Nix consumers).
+# Org-wide pre-commit base template (non-Nix consumers).
 #
 # Nix-flake consumers should NOT use this file. They get the same hooks
 # via `imports = [ inputs.nix-devenv.flakeModules.base ];` with version
@@ -10,7 +10,7 @@
 #   gh api repos/JacobPEvans/.github/contents/precommit/templates/base.yaml \
 #     -H "Accept: application/vnd.github.raw" > .pre-commit-config.yaml
 #
-# Hook set mirrors lib/pre-commit-hooks.nix in dryvist/nix-devenv so that
+# Hook set mirrors lib/pre-commit-hooks.nix in nix-devenv so that
 # Nix and non-Nix consumers run an identical baseline.
 ---
 repos:

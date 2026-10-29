@@ -1,6 +1,5 @@
 # Input definitions (sources). Each input MUST set a metadata.datatype field
-# so route filters can match it. See VisiCore/cc-edge-claude-code-io/default/inputs.yml
-# for a complete example with file-monitor and OTLP inputs.
+# so route filters can match it.
 #
 # Example skeleton:
 #
